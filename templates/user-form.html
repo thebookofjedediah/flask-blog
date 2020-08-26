@@ -3,8 +3,10 @@
 {% block content %}
 <h1>Add User</h1>
 
-<form action="">
-    
+<form action="/users" method="POST">
+    <input type="text" name="first_name" placeholder="First Name">
+    <input type="text" name="last_name" placeholder="Last Name">
+    <input type="text" name="image_url" placeholder="Image URL">
     <button>Add User</button>
 </form>
 

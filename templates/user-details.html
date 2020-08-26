@@ -5,5 +5,11 @@
 
 <img src="{{user.image_url}}" alt="Profile Image">
 <h3><span>{{user.first_name}}</span><span>{{user.last_name}}</span></h3>
+<form action="/users/{{user.id}}/delete" method="POST">
+    <button>Delete</button>
+</form>
+<form action="/users/{{user.id}}/edit">
+    <button>Edit</button>
+</form>
 
 {% endblock %}
