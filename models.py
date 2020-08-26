@@ -18,6 +18,8 @@ class User(db.Model):
     last_name = db.Column(db.Text, nullable=False)
     image_url = db.Column(db.Text, nullable=False, default="https://cloudcone.com/wp-content/uploads/2019/03/blank-avatar.jpg")
 
+    posts = db.relationship("Post", backref="user", cascade="all, delete-orphan")
+
     @property
     def full_name(self):
         """Return full name of user."""

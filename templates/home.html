@@ -3,5 +3,16 @@
 {% block content %}
 <h1>Blogly</h1>
 
-<p>welcome</p>
+<h3>Posts</h3>
+<ul>
+    {% for post in posts %}
+    <li>
+      <a href="/posts/{{post.id}}">{{ post.title }}</a>
+      <small>{{ post.friendly_date }}</small>
+    </li>
+    {% endfor %}
+</ul>
+
+<a href="/users">See All Authors</a>
+
 {% endblock %}

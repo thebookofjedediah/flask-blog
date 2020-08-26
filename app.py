@@ -18,7 +18,8 @@ connect_db(app)
 @app.route('/')
 def get_home():
     """shows list of all users"""
-    return redirect('/users')
+    posts = Post.query.order_by(Post.created_at.desc()).limit(5).all()
+    return render_template('home.html', posts=posts)
 
 @app.route('/users')
 def get_users():
@@ -98,12 +99,12 @@ def new_post(user_id):
 #     return redirect(f"/users/{user_id}")
 
 
-# @app.route('/posts/<int:post_id>')
-# def posts_show(post_id):
-#     """Show a page with info on a specific post"""
+@app.route('/posts/<int:post_id>')
+def posts_show(post_id):
+    """Show a page with info on a specific post"""
 
-#     post = Post.query.get_or_404(post_id)
-#     return render_template('post-details.html', post=post)
+    post = Post.query.get_or_404(post_id)
+    return render_template('post-details.html', post=post)
 
 
 @app.route('/users/<int:user_id>/posts/new')
@@ -128,3 +129,32 @@ def posts_new(user_id):
     flash(f"Post '{new_post.title}' added.")
 
     return redirect(f"/users/{user_id}")
+
+
+@app.route('/posts/<int:post_id>/edit')
+def post_edit(post_id):
+    post = Post.query.get_or_404(post_id)
+    return render_template('post-edit.html', post=post)
+
+
+@app.route('/posts/<int:post_id>/edit', methods=["POST"])
+def posts_update(post_id):
+    """Handle form submission for editing an existing post"""
+
+    post = Post.query.get_or_404(post_id)
+    post.title = request.form["title"]
+    post.content = request.form["content"]
+ 
+    db.session.add(post)
+    db.session.commit()
+
+    return redirect(f"/posts/{post_id}")
+
+@app.route('/posts/<int:post_id>/delete', methods=["POST"])
+def posts_destroy(post_id):
+    """Handle form submission for deleting an existing post"""
+    post = Post.query.get_or_404(post_id)
+    db.session.delete(post)
+    db.session.commit()
+
+    return redirect("/users")
