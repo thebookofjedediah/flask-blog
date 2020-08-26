@@ -1,5 +1,5 @@
-from flask import Flask, render_template, redirect, request
-from models import db, connect_db, User
+from flask import Flask, render_template, redirect, request, flash
+from models import db, connect_db, User, Post
 from flask_debugtoolbar import DebugToolbarExtension
 
 app = Flask(__name__)
@@ -79,3 +79,52 @@ def users_update(user_id):
 
     return redirect("/users")
 
+# PART TWO
+@app.route('/users/<int:user_id>/posts/new')
+def new_post(user_id):
+    """form for creating a new post"""
+    user = User.query.get_or_404(user_id)
+    return render_template('new-post.html', user=user)
+
+# @app.route('/users/<int:user_id>/posts/new', methods=["POST"])
+# def add_post(user_id):
+#     """Create new post"""
+#     user = User.query.get_or_404(user_id)
+#     new_post = Post(title = request.form["title"], content = request.form["content"], user=user)
+
+#     db.session.add(new_post)
+#     db.session.commit()
+
+#     return redirect(f"/users/{user_id}")
+
+
+# @app.route('/posts/<int:post_id>')
+# def posts_show(post_id):
+#     """Show a page with info on a specific post"""
+
+#     post = Post.query.get_or_404(post_id)
+#     return render_template('post-details.html', post=post)
+
+
+@app.route('/users/<int:user_id>/posts/new')
+def posts_new_form(user_id):
+    """Show a form to create a new post for a specific user"""
+
+    user = User.query.get_or_404(user_id)
+    return render_template('new-post.html', user=user)
+
+
+@app.route('/users/<int:user_id>/posts/new', methods=["POST"])
+def posts_new(user_id):
+    """Handle form submission for creating a new post for a specific user"""
+
+    user = User.query.get_or_404(user_id)
+    new_post = Post(title=request.form['title'],
+                    content=request.form['content'],
+                    user=user)
+
+    db.session.add(new_post)
+    db.session.commit()
+    flash(f"Post '{new_post.title}' added.")
+
+    return redirect(f"/users/{user_id}")
