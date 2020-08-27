@@ -6,9 +6,9 @@
 <form action="/users/{{user.id}}/posts/new" method="POST">
     <input type="text" name="title" placeholder="Title">
     <input type="textarea" name="content" placeholder="Content">
-
+    <p>Add Tags:</p>
     {% for tag in tags %}
-    <div>
+    <div class="checkboxes">
       <input class="form-check-input"
              type="checkbox"
              value="{{ tag.id }}"
@@ -20,7 +20,7 @@
     </div>
     {% endfor %}
 
-    <button>Add</button>
+    <button type="submit" class="btn btn-primary">Add</button>
     
 </form>
 

@@ -1,9 +1,7 @@
 {% extends 'base.html' %}
 {% block title %} Blogly {% endblock %}
 {% block content %}
-<h1>Blogly</h1>
-
-<h3>Posts</h3>
+<h1>Recent Posts</h1>
 <ul>
     {% for post in posts %}
     <li>
@@ -12,7 +10,5 @@
     </li>
     {% endfor %}
 </ul>
-
-<a href="/users">See All Authors</a>
 
 {% endblock %}

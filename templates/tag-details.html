@@ -11,11 +11,11 @@
   </ul>
 
   <form action="/tags/{{tag.id}}/delete" method="POST">
-    <button>Delete</button>
+    <button type="submit" class="btn btn-danger">Delete</button>
   </form>
   
   <form action="/tags/{{tag.id}}/edit">
-    <button>Edit</button>
+    <button type="submit" class="btn btn-warning">Edit</button>
   </form>
 
 {% endblock %}

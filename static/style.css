@@ -1,3 +1,11 @@
+#body-content {
+    padding: 20px;
+}
+
 img {
     max-width: 100px;
+}
+
+.checkboxes {
+    margin-left: 25px;
 }

@@ -6,16 +6,14 @@
 <img src="{{user.image_url}}" alt="Profile Image">
 <h3>{{user.full_name}}</h3>
 <form action="/users/{{user.id}}/delete" method="POST">
-    <button>Delete</button>
+    <button type="submit" class="btn btn-danger">Delete</button>
 </form>
 <form action="/users/{{user.id}}/edit">
-    <button>Edit</button>
+    <button type="submit" class="btn btn-warning">Edit</button>
 </form>
 
-<a href="/users/{{user.id}}/posts/new">
-    <button>
+<a href="/users/{{user.id}}/posts/new" role="button" class="btn btn-primary">
         Add Post
-    </button>
 </a>
 
 <h3>Posts</h3>

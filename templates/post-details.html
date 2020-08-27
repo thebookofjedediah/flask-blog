@@ -8,11 +8,11 @@
 </i></p>
 
 <form action="/posts/{{post.id}}/delete" method="POST">
-  <button>Delete</button>
+  <button type="submit" class="btn btn-danger" >Delete</button>
 </form>
 
 <form action="/posts/{{post.id}}/edit">
-  <button>Edit</button>
+  <button type="submit" class="btn btn-warning">Edit</button>
 </form>
 
 {% if post.tags %}
