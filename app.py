@@ -201,3 +201,12 @@ def tags_update(tag_id):
     db.session.commit()
 
     return redirect(f"/tags/{tag_id}")
+
+@app.route('/tags/<int:tag_id>/delete', methods=["POST"])
+def tags_destroy(tag_id):
+    """Handle form submission for deleting an existing tag"""
+    tag = Tag.query.get_or_404(tag_id)
+    db.session.delete(tag)
+    db.session.commit()
+
+    return redirect("/tags")
