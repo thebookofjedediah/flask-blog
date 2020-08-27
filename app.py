@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect, request, flash
-from models import db, connect_db, User, Post
+from models import db, connect_db, User, Post, Tag, PostTag
 from flask_debugtoolbar import DebugToolbarExtension
 
 app = Flask(__name__)
@@ -81,22 +81,6 @@ def users_update(user_id):
     return redirect("/users")
 
 # PART TWO
-@app.route('/users/<int:user_id>/posts/new')
-def new_post(user_id):
-    """form for creating a new post"""
-    user = User.query.get_or_404(user_id)
-    return render_template('new-post.html', user=user)
-
-# @app.route('/users/<int:user_id>/posts/new', methods=["POST"])
-# def add_post(user_id):
-#     """Create new post"""
-#     user = User.query.get_or_404(user_id)
-#     new_post = Post(title = request.form["title"], content = request.form["content"], user=user)
-
-#     db.session.add(new_post)
-#     db.session.commit()
-
-#     return redirect(f"/users/{user_id}")
 
 
 @app.route('/posts/<int:post_id>')
@@ -112,7 +96,8 @@ def posts_new_form(user_id):
     """Show a form to create a new post for a specific user"""
 
     user = User.query.get_or_404(user_id)
-    return render_template('new-post.html', user=user)
+    tags = Tag.query.all()
+    return render_template('new-post.html', user=user, tags=tags)
 
 
 @app.route('/users/<int:user_id>/posts/new', methods=["POST"])
@@ -120,9 +105,12 @@ def posts_new(user_id):
     """Handle form submission for creating a new post for a specific user"""
 
     user = User.query.get_or_404(user_id)
+    tag_ids = [int(num) for num in request.form.getlist("tags")]
+    tags = Tag.query.filter(Tag.id.in_(tag_ids)).all()
     new_post = Post(title=request.form['title'],
                     content=request.form['content'],
-                    user=user)
+                    user=user,
+                    tags=tags)
 
     db.session.add(new_post)
     db.session.commit()
@@ -134,7 +122,8 @@ def posts_new(user_id):
 @app.route('/posts/<int:post_id>/edit')
 def post_edit(post_id):
     post = Post.query.get_or_404(post_id)
-    return render_template('post-edit.html', post=post)
+    tags = Tag.query.all()
+    return render_template('post-edit.html', post=post, tags=tags)
 
 
 @app.route('/posts/<int:post_id>/edit', methods=["POST"])
@@ -144,6 +133,9 @@ def posts_update(post_id):
     post = Post.query.get_or_404(post_id)
     post.title = request.form["title"]
     post.content = request.form["content"]
+
+    tag_ids = [int(num) for num in request.form.getlist("tags")]
+    post.tags = Tag.query.filter(Tag.id.in_(tag_ids)).all()
  
     db.session.add(post)
     db.session.commit()
@@ -158,3 +150,54 @@ def posts_destroy(post_id):
     db.session.commit()
 
     return redirect("/users")
+
+# PART 3
+
+@app.route('/tags')
+def get_tags():
+    """shows list of all tags"""
+    tags = Tag.query.all()
+    return render_template('tags-list.html', tags=tags)
+
+@app.route('/tags/<int:tag_id>')
+def get_tag_details(tag_id):
+    """show specific tag details"""
+    tag = Tag.query.get_or_404(tag_id)
+    return render_template('tag-details.html', tag=tag)
+
+@app.route('/tags/new')
+def tags_new_form():
+    """Show a form to create a new tag"""
+
+    posts = Post.query.all()
+    return render_template('new-tags.html', posts=posts)
+
+@app.route('/tags/new', methods=["POST"])
+def add_new_tag():
+    """Handle form submit and create a new tag"""
+
+    post_ids = [int(num) for num in request.form.getlist("posts")]
+    posts = Post.query.filter(Post.id.in_(post_ids)).all()
+    new_tag = Tag(name=request.form['name'], posts=posts)
+
+    db.session.add(new_tag)
+    db.session.commit()
+    return redirect('/tags')
+
+@app.route('/tags/<int:tag_id>/edit')
+def edit_tag(tag_id):
+    """Form to edit a tag"""
+    tag = Tag.query.get_or_404(tag_id)
+    return render_template('tag-edit.html', tag=tag)
+
+@app.route('/tags/<int:tag_id>/edit', methods=["POST"])
+def tags_update(tag_id):
+    """Handle form submission for editing an existing tag"""
+
+    tag = Tag.query.get_or_404(tag_id)
+    tag.name = request.form["name"]
+ 
+    db.session.add(tag)
+    db.session.commit()
+
+    return redirect(f"/tags/{tag_id}")
